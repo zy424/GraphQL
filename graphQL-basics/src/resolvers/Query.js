@@ -1,10 +1,11 @@
 const Query = {
   users(parent, args, { db }, info) {
+    console.log(db);
     if (!args.query) {
       return db.users;
     }
     return users.filter(user => {
-      return db.user.name
+      return user.name
         .toLocaleLowerCase()
         .includes(args.query.toLocaleLowerCase());
     });

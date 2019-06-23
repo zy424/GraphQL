@@ -2,16 +2,18 @@ const users = [
   {
     id: "1",
     name: "Jamie",
-    age: 34
+    email: "123.com"
   },
   {
     id: "2",
     name: "Andrew",
+    email: "456.com",
     age: 27
   },
   {
     id: "3",
     name: "Katie",
+    email: "789.com",
     age: 37
   }
 ];
@@ -73,4 +75,4 @@ const db = {
   comments
 };
 
-export { db as defalut };
+export { db as default };
