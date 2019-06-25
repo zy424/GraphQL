@@ -13,9 +13,15 @@ type Query {
       createPost(data: CreatePostInput): Post!
       updatePost(id:ID!, data: UpdatePostInput): Post!
       deletePost(id: ID!): Post!
-      createComment(id:ID!,data: CreateCommentInput): Comment!
+      createComment(data: CreateCommentInput): Comment!
       updateComment(id:ID!, data: UpdateCommentInput): Comment!
       deleteComment(id: ID!): Comment!
+    }
+
+    type Subscription {
+      count: Int!
+      comment(postId: ID!): Comment!
+      post: Post!
     }
 
     input CreateUserInput {

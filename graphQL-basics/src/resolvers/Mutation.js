@@ -1,4 +1,5 @@
 import uuid from "uuid/v4";
+import { PubSub } from "graphql-yoga";
 
 const Mutation = {
   createUser(parent, args, { db }, info) {
@@ -55,7 +56,7 @@ const Mutation = {
     return user;
   },
 
-  createPost(parent, args, { db }, info) {
+  createPost(parent, args, { db, pubsub }, info) {
     const userExists = db.users.some(user => user.id === args.data.author);
     if (!userExists) {
       throw new Error("User not found");
@@ -65,7 +66,12 @@ const Mutation = {
       id: uuid(),
       ...args.data
     };
+    if (args.data.published) {
+      pubsub.publish("post", { post: post });
+    }
+
     db.posts.push(post);
+
     return post;
   },
 
@@ -100,7 +106,7 @@ const Mutation = {
     return post;
   },
 
-  createComment(parent, args, { db }, info) {
+  createComment(parent, args, { db, pubsub }, info) {
     const userExists = db.users.some(user => user.id === args.data.author);
     const postExists = db.posts.some(post => {
       return post.id === args.data.post && post.published;
@@ -118,6 +124,8 @@ const Mutation = {
     };
 
     db.comments.push(comment);
+    pubsub.publish(`comment ${args.data.post}`, { comment: comment });
+
     return comment;
   },
 
