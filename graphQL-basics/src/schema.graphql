@@ -20,8 +20,8 @@ type Query {
 
     type Subscription {
       count: Int!
-      comment(postId: ID!): Comment!
-      post: Post!
+      comment(postId: ID!): CommentSubsriptionPayload!
+      post: PostSubsriptionPayload!
     }
 
     input CreateUserInput {
@@ -71,4 +71,20 @@ type Query {
       text: String!
       author: User!
       post: Post!
+    }
+
+    enum MutationType {
+      CREATED
+      UPDATED
+      DELETED
+    }
+
+    type PostSubsriptionPayload {
+      mutation: MutationType!
+      data: Post!
+    }
+
+    type CommentSubsriptionPayload {
+      mutation: MutationType!
+      data: Comment!
     }
