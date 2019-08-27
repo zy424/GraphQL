@@ -1,0 +1,49 @@
+static getNonDuplicatedLinks = (links: IMapLink[]): IMapLink[] => {
+        // ordering the links first based on the following preference:
+        // 1. forwarding link > blocking link
+        // 2. connected link > disconnected link
+        // 3. AMF link > other links
+
+        // convert original linktype to linkType with priority
+        const mappedLinks = links.map(link=> {
+            const convertedlinkType = _.get(MapUtils.linkTypeDict, link.linkType);
+            link.linkType = convertedlinkType;
+            return link;
+        })
+        const sortedLinks = _.orderBy(
+            mappedLinks,
+            ['linkStatus', 'isConnected', 'linkType'],
+            ['desc', 'desc', 'asc'],
+        );
+
+        const nonDuplicatedLinkDict = sortedLinks.reduce(
+            (dict, link) => {
+                const linkId =
+                    link.sourceId > link.targetId
+                        ? `${link.sourceId}${link.targetId}`
+                        : `${link.targetId}${link.sourceId}`;
+                if (!dict[linkId]) {
+                    dict[linkId] = link;
+                }
+                return dict;
+            },
+            {} as { [srcIdtargetId: string]: IMapLink },
+        );
+
+        const nonDuplicatedLinks = _.values(nonDuplicatedLinkDict).map(link => {
+            const originalLinkType = _.get(_invert(MapUtils.linkTypeDict), link.linkType);
+            link.linkType = originalLinkType;
+            return link;
+        })
+
+        return nonDuplicatedLinks;
+    };
+
+    
+    static readonly linkTypeDict = {
+        'amf': '1',
+        'cross': '2',
+        'virtual': '3',
+        'guest': '4',
+        'default': '5'
+    };
